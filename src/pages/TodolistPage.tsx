@@ -1,8 +1,9 @@
+import { useState, useEffect } from "react";
 import TaskCard from "../components/TaskCard";
 import TodoModal from "../components/Modal";
 import { type TaskCardProps } from "../libs/Todolist";
-import { useState, useEffect } from "react";
-import Footer from "../components/Footer";
+import "../styles.css";
+
 const STORAGE_KEY = "lab13.tasks";
 
 function loadTasks(): TaskCardProps[] {
@@ -22,7 +23,7 @@ function saveTasks(tasks: TaskCardProps[]) {
   }
 }
 
-function App() {
+export default function App() {
   const [tasks, setTasks] = useState<TaskCardProps[]>(loadTasks);
 
   useEffect(() => {
@@ -30,11 +31,11 @@ function App() {
   }, [tasks]);
 
   const handleAdd = (newTask: TaskCardProps) => {
-    setTasks([...tasks, newTask]);
+    setTasks((prevTasks) => [...prevTasks, newTask]);
   };
 
   const deleteTask = (taskId: string) => {
-    setTasks(tasks.filter((t) => t.id !== taskId));
+    setTasks((prevTasks) => prevTasks.filter((task) => task.id !== taskId));
   };
 
   const toggleDoneTask = (taskId: string) => {
@@ -49,48 +50,71 @@ function App() {
   const doneCount = tasks.filter((task) => task.isDone).length;
 
   return (
-    <div className="col-12 m-2 p-0">
-      <div className="container text-center">
-        <h2>Todo List</h2>
-        <div className="d-flex justify-content-center gap-3 my-3">
-          <div className="card border-primary text-primary px-4 py-1 shadow-sm rounded-4">
-            <span className="fw-bold fs-6">All</span>
-            <span className="fs-3 fw-bolder">{allCount}</span>
+    <div className="container py-4 font" style={{ maxWidth: "600px" }}>
+      <div
+        className="card border-0 shadow-sm p-4 text-center"
+        style={{ backgroundColor: "#fffdf9", borderRadius: "24px" }}
+      >
+        <div className="card-body p-2">
+          <h2 className="fw-bold mb-3" style={{ color: "#5b556e" }}>
+            Todo List
+          </h2>
+
+          <div className="d-flex justify-content-center gap-3 my-3">
+            <div
+              className="card border-0 px-4 py-2 shadow-sm"
+              style={{
+                backgroundColor: "#e8f1ff",
+                color: "#517fa8",
+                borderRadius: "18px",
+              }}
+            >
+              <span className="fw-bold fs-6">All</span>
+              <span className="fs-3 fw-bolder">{allCount}</span>
+            </div>
+
+            <div
+              className="card border-0 px-4 py-2 shadow-sm"
+              style={{
+                backgroundColor: "#e2f7ed",
+                color: "#408a66",
+                borderRadius: "18px",
+              }}
+            >
+              <span className="fw-bold fs-6">Done</span>
+              <span className="fs-3 fw-bolder">{doneCount}</span>
+            </div>
           </div>
-          <div className="card border-success text-success px-4 py-1 shadow-sm rounded-4">
-            <span className="fw-bold fs-6">Done</span>
-            <span className="fs-3 fw-bolder">{doneCount}</span>
+
+          <div>
+            <button
+              type="button"
+              className="btn text-white fw-bold my-3 px-4 py-2 shadow-sm"
+              style={{ backgroundColor: "#9bb8ed", borderRadius: "20px" }}
+              data-bs-toggle="modal"
+              data-bs-target="#todoModal"
+            >
+              + Add Task
+            </button>
+          </div>
+
+          <TodoModal onAdd={handleAdd} />
+
+          <div className="mt-2 text-start">
+            {tasks.map((task) => (
+              <TaskCard
+                key={task.id}
+                id={task.id}
+                title={task.title}
+                description={task.description}
+                isDone={task.isDone}
+                deleteTaskFunc={deleteTask}
+                toggleDoneTaskFunc={toggleDoneTask}
+              />
+            ))}
           </div>
         </div>
-
-        <div>
-          <button
-            type="button"
-            className="btn btn-primary my-3"
-            data-bs-toggle="modal"
-            data-bs-target="#todoModal"
-          >
-            Add
-          </button>
-        </div>
-
-        <TodoModal onAdd={handleAdd} />
-        <>
-          {tasks.map((task) => (
-            <TaskCard
-              id={task.id}
-              title={task.title}
-              description={task.description}
-              deleteTaskFunc={deleteTask}
-              toggleDoneTaskFunc={toggleDoneTask}
-              isDone={task.isDone}
-              key={task.id}
-            />
-          ))}
-        </>
       </div>
     </div>
   );
 }
-
-export default App;
