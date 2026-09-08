@@ -1,10 +1,10 @@
-interface props {
+interface TaskCardProps {
   id: string;
   title: string;
   description: string;
   isDone: boolean;
-  deleteTaskFunc: (taskId: string) => void; // callback function
-  toggleDoneTaskFunc: (taskId: string) => void; // callback function
+  deleteTaskFunc: (taskId: string) => void;
+  toggleDoneTaskFunc: (taskId: string) => void;
 }
 
 export default function TaskCard({
@@ -14,8 +14,7 @@ export default function TaskCard({
   isDone,
   deleteTaskFunc,
   toggleDoneTaskFunc,
-}: props) {
-  // callback function when delete button is clicked
+}: TaskCardProps) {
   const deleteBtnOnClick = () => {
     deleteTaskFunc(id);
   };
@@ -25,10 +24,11 @@ export default function TaskCard({
   };
 
   return (
-    <div key={id} className="card mb-3">
+    <div className="card mb-3">
       <div className="card-body">
         <div className="row">
           <div className="col-xs-3 col-sm-3 col-md-3 col-lg-4">
+            {/* แสดงเส้นขีดฆ่าเมื่อ isDone เป็น true */}
             <h5
               className={
                 isDone
